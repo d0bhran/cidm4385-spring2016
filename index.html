@@ -1,12 +1,12 @@
 <!-- this is an AngularJS View Template -->
 <!-- it is necessary to create a module into which we place our ng-app -->
-<html ng-app="AngularJSExample">
+<html ng-app="AngularJSAssignmentOne">
     <head>
         <!-- from Google Hosted Libraries -->
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.17/angular.min.js"></script>
         <script lang="javascript">
         
-            var myModule = angular.module('AngularJSExample', []);
+            var myModule = angular.module('AngularJSAssignmentOne', []);
             
             //first register the controller - https://docs.angularjs.org/guide/migration
             myModule.controller('CostController', 
@@ -16,25 +16,22 @@
                     var cc = this;
                     
                     cc.cost = 100;
-                    //cc.add_tax = true;
+                    cc.add_tax = true;
                     cc.total_bill = true;
                     
                     function update(){
-                        //cc.tax = cc.add_tax ? cc.cost * cc.state_tax.amount : 0.0; 
-                        cc.tax = cc.cost * cc.state_tax.amount;
-                        cc.total = parseFloat(cc.cost) + (cc.cost * cc.tax); 
-                    }
+                        cc.tax = cc.add_tax ? cc.cost * cc.taxrate.amount : 0.0; 
+                        cc.total = parseFloat(cc.cost) + cc.tax; 
+                        cc.final_bill10 = cc.total + (cc.total * .10);
+                        cc.final_bill15 = cc.total + (cc.total * .15);
+                        cc.final_bill20 = cc.total + (cc.total * .20);
+                    }//end function update
                     
                     //used to detect when cost changes
                     $scope.$watch('cc.cost', update);
-                   //$scope.$watch('cc.add_tax', update);
-                    $scope.$watch('cc.state_tax', update);
-                    $scope.$watch('cc.cost + cc.tax', update);
-                    
-                    //final bill
-                    cc.final_bill10 = cc.total + (cc.total * .10);
-                    cc.final_bill15 = cc.total + (cc.total * .15);
-                    cc.final_bill20 = cc.total + (cc.total * .20);
+                    $scope.$watch('cc.add_tax', update);
+                    $scope.$watch('cc.taxrate', update);
+                    $scope.$watch('cc.cost + cc.taxrate', update);
                     
                     //state tax options 
                     //amounts taken from http://taxfoundation.org/article/state-and-local-sales-tax-rates-2014 combined rate
@@ -91,12 +88,11 @@
                         {amount:0.0549, name:"Wyoming"},
                         {amount:0.0575, name:"D.C."},
                     ];
+                    cc.taxrate = cc.state_tax[0];
+                
                     
-                    cc.tax = cc.state_tax[0];
-                    
-                    
-                }
-            );
+                }//end function $scope
+            );//end myModule.controller
         </script>
     </head>
     <body>
@@ -105,7 +101,7 @@
             <input type="checkbox" ng-model="cc.total_bill" />Show Total
             <p>
                 Bill: <input type="text" ng-model="cc.cost" placeholder="cost" /><br/>
-                Select State: <select ng-model="cc.tax" ng-options="s.name for s in cc.state_tax"></select>
+                Select State: <select ng-model="cc.taxrate" ng-options="s.name for s in cc.state_tax"></select>
             </p>
             <p>
                 <!-- the angular directive both associates with the cost model and
@@ -117,16 +113,15 @@
             </p>
             <p ng-show="cc.total_bill">
                 This is your total: {{cc.total|currency}}
-                
             </p>
             <p ng-show="cc.final_bill10">
-                Your total with 10 % tip is {{cc.final_bill10|currency}}
+                Total + 10 % tip: {{cc.final_bill10|currency}}
             </p>
-            <p ng-show="cc.final_bill15">
-                Your total with 15 % tip is {{cc.final_bill15|currency}}
+            <p>
+                Total + 15 % tip: {{cc.final_bill15|currency}}
             </p>
-            <p ng-show="cc.final_bill20">
-                Your total with 20 % tip is {{cc.final_bill20|currency}}
+            <p>
+                Total + 20 % tip: {{cc.final_bill20|currency}}
             </p>
         </div>
     </body>
